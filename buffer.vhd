@@ -30,7 +30,9 @@ architecture rtl of baud_generator is
     signal clk_freq   : positive;
     signal baud_rate  : positive;
 
-    -- Add your prescaler/counter declarations here
+    signal clocks_per_bit : positive;
+    signal prescaler_count : natural := 0;
+    signal baud_tick_reg   : std_logic := '0';
 
 begin
 
@@ -79,7 +81,8 @@ begin
         end case;
     end process;
 
-    -- Your prescaler and baud_tick logic goes here
+    -- determine prescalar value
+    clocks_per_bit <= clk_freq / baud_rate;
 
 end architecture rtl;
 ```

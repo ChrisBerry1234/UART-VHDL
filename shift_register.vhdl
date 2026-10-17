@@ -52,6 +52,7 @@ architecture rtl of tx_shift_register is
       end if;
     end process;
 
+    --data is sent asychronously bit by bit 
     tx_data_out <= tx_shift_reg(0);
 
 end architecture;     

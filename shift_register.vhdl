@@ -7,6 +7,7 @@ entity tx_shift_register is
     tx_data_out  : out std_logic_vector(7 downto 0);
     reset        : in std_logic;
     baud_tick    : in std_logic; 
+    data_in      : in std_logic_vector(7 downto 0);
     send_data    : in std_logic; 
     shift_en     : in std_logic; 
     tx_busy      : out std_logic; 

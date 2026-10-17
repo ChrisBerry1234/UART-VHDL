@@ -7,6 +7,7 @@ entity tx_shift_register is
     tx_data_out  : out std_logic_vector(7 downto 0);
     reset        : in std_logic;
     baud_tick    : in std_logic; 
+    send_data    : in std_logic; 
     shift_en     : in std_logic; 
     tx_busy      : out std_logic; 
     tx_shift_done: out std_logic;
@@ -29,12 +30,27 @@ architecture rtl of tx_shift_register is
         tx_shift_done <= '0';
         
       elsif rising_edge(clk) then 
-        if (shift_en = '1' and baud_tick = '1') then
+        if (send_data = '1') then
           --Load data with start bit 0 and stop bit 1
           tx_shift_register <= '1' & data_in & '0';
+          bit_counter <= '0';
+          tx_shift_done <= '0';
+        elsif (shift_en = '1' and baud_tick = '1') then 
           if bit_counter = 9 then 
-            
-          
-          
-        
-        
+            tx_shift_done = '1'; --all bits were sent out 
+          else 
+            --use slice to shift data from LSB 
+            tx_shift_register(6 downto 0 ) >= tx_shift_register(7 downto 0);
+            --after every shift, bit count so we can keep track 
+            bit_counter <= bit_counter + 1;
+            tx_shift_done <= '0';
+          end if;
+        else 
+          tx_shift_done <= '0';
+        end if;
+      end if;
+    end process;
+
+    tx_data_out <= tx_shift_reg(0);
+
+end architecture;     

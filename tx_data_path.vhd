@@ -31,7 +31,8 @@ architecture rtl of tx_data_path is
           send_data     => send_data, 
           shift_en      => shift_en, 
           tx_busy       => tx_busy, 
-          tx_shift_done => tx_shift_done 
+          tx_shift_done => tx_shift_done, 
+          tx_data_out   => tx_data_out
       );
 
     TX_BUFFER : entity work.tx_buffer 

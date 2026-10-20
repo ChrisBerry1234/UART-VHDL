@@ -10,6 +10,7 @@ entity tx_buffer is
     data_in      : in std_logic_vector(7 downto 0);
     data_out     : out std_logic_vector(7 downto 0); --OUTPUT DATA THAT WILL BE FED INTO SHIFT REGISTER
     tx_buf_empty : out std_logic; --SIGNAL CONTROL SIGNAL THAT BUFFER IS EMPTY
+    tx_shift_done      : in std_logic
   );
 end tx_buffer;
 
@@ -24,10 +25,21 @@ architecture rtl of tx_buffer is
         tx_buf_empty <= '1'; --TX BUFFER IS EMPTY
         
       if (rising_edge(clk) then
-        if (load_txbuf = '1') then 
+          
+       --check if buffer currently has data
+        if(send_data = '1' and tx_buf_empty <= '0') then
+          data_out <= tx_buffer; 
+          tx_buf_empty = '1';
+          -- UART is asynchronous so while data is shifting out, new data can also be shifted in
+          if load_txbuf = '1' then
+            tx_buffer <= data_in;
+            tx_buf_empty = '0';
+          else 
+            tx_buf_empty = '1'; 
+        elsif (load_txbuf = '1' and tx_buf_empty = '1') then 
           tx_buffer <= data_in;
           tx_buf_empty <= '0';
-          if (send_data = '1') then
+          if (send_data = '1' and tx_shift_done) then
             data_out <= tx_buffer;
             tx_buf_empty <= '1';
           end if;

@@ -20,7 +20,18 @@ end tx_data_path;
 architecture rtl of tx_data_path is 
   --declarations
   signal tx_buffer_to_shift : std_logic_vector(9 downto 0);
+
   begin 
+    TX_BUFFER : entity work.tx_buffer 
+      port map (
+        clk             => clk,
+        reset           => reset, 
+        data_out        => tx_buffer_to_shift,
+        data_in         => data_in,
+        tx_buf_empty    => tx_buf_empty,
+        load_txbuf      => load_txbuf
+      );
+      
     SHIFT_REGISTER : entity work.tx_shift_register
       port map (
           clk           => clk,
@@ -33,16 +44,6 @@ architecture rtl of tx_data_path is
           tx_busy       => tx_busy, 
           tx_shift_done => tx_shift_done, 
           tx_data_out   => tx_data_out
-      );
-
-    TX_BUFFER : entity work.tx_buffer 
-      port map (
-        clk             => clk,
-        reset           => reset, 
-        data_out        => tx_buffer_to_shift,
-        data_in         => data_in,
-        tx_buf_empty    => tx_buf_empty,
-        load_txbuf      => load_txbuf
       );
       
 end architecture;

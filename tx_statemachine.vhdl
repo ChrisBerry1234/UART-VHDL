@@ -39,7 +39,7 @@ architecture rtl of tx_state_machine is
               --FSM Traversal, must know what state we are currently in
               case(current_state) is
                 when(IDLE) =>
-                  if tx_start = '1' then 
+                  if tx_start = '1' and tx_buf_empty = '0' then 
                     -- Wait for the baud tick to signify the end of the start bit period
                     next_state <= START;
                   else 
@@ -70,19 +70,32 @@ architecture rtl of tx_state_machine is
             begin
               case(current_state) is 
                 when (IDLE) =>
+                  send_data <= '0';
+                  shift_en <= '0';
+                  tx_busy  <= '0';
+                  tx_line <= '1'; 
                   tx_busy <= '0';
-                when (START) =>
-                  load_txbuf <= '1';
+                  load_txbuf <= '1'
+                when (START) => 
+                    send_data <= '0';
+                    shift_en <= '0';
+                    tx_busy  <= '1';
+                    tx_line <= '0'; -- Draw Start Bit Low Receiver knows to expect data
+                    load_txbuf <= '0';
+                  end if;
                 when (DATA) =>
                   send_data <= '1';
-                  shift_en <= '1';
+                  shift_en <= baud_tick; -- to avoid shifting whenever, we only want data sent on baud tick so
                   tx_busy  <= '1';
+                  tx_line <= '1'; 
+                  load_txbuf <= '0';
                   --txline needs to shift out data
                 when (END) =>
                   tx_busy <= '0';
                   send_data <= '0';
                   shift_en <= '0';
                   load_txbuf <= '0';
+                  tx_line <= '1';
               end case;
 end process;
 end architecture;

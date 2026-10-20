@@ -9,6 +9,7 @@ entity tx_state_machine is
     baud_tick     : in std_logic; 
     clock         : in std_logic;
     reset         : in std_logic; 
+    tx_data_in    : in std_logic_vector(7 downto 0);  
     
     load_txbuf    : out std_logic := 0;  --load new data into TXBUF
     send_data     : out std_logic := 0;  --load data from TXBUF to TXSHIFT
@@ -87,7 +88,7 @@ architecture rtl of tx_state_machine is
                   send_data <= '1';
                   shift_en <= baud_tick; -- to avoid shifting whenever, we only want data sent on baud tick so
                   tx_busy  <= '1';
-                  tx_line <= '1'; 
+                  tx_line <= data_in; 
                   load_txbuf <= '0';
                   --txline needs to shift out data
                 when (END) =>

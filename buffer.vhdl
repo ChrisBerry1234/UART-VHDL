@@ -10,7 +10,7 @@ entity tx_buffer is
     data_in      : in std_logic_vector(7 downto 0);
     data_out     : out std_logic_vector(7 downto 0); --OUTPUT DATA THAT WILL BE FED INTO SHIFT REGISTER
     tx_buf_empty : out std_logic; --SIGNAL CONTROL SIGNAL THAT BUFFER IS EMPTY
-    tx_shift_done      : in std_logic
+    tx_shift_done: in std_logic
   );
 end tx_buffer;
 

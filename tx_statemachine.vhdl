@@ -21,7 +21,7 @@ end tx_state_machine;
 
 architecture rtl of tx_state_machine is 
   --declarations
-  type state_type is (IDLE, START, DATA, END);
+  type state_type is (IDLE, START, DATA, STOP);
   signal next_state, current_state : state_type;
 
   begin 
@@ -52,15 +52,15 @@ architecture rtl of tx_state_machine is
                     next_state <= START;
                 when(DATA) =>
                   if tx_shift_done = '1' then
-                    next_state <= END; 
+                    next_state <= STOP; 
                   else 
                     next_state <= DATA;
-                when(END) =>
+                when(STOP) =>
                   -- Wait for the stop bit period to complete via the baud tick
                   if baud_tick = '1' then
                     next_state <= IDLE; -- transmission is complete
                   else 
-                    next_state <= END; 
+                    next_state <= STOP;                    
                 when(other) =>
                     next_state <= IDLE; 
               end case;
